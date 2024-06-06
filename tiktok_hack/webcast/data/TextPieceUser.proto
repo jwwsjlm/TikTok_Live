@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "tiktok_hack/generated/data";
+import "data/User.proto";
+
+message TextPieceUser {
+    // 用户信息，可能包含用户的详细信息
+    User user = 1;
+    
+    // 是否带冒号，可能表示在显示时用户名后是否需要加上冒号
+    bool with_colon = 2;
+  }

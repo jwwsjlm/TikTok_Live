@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package tiktok_hack;
+
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.data";
+option go_package = "tiktok_hack/generated/data";
+import "data/TextFormat.proto";
+import "data/TextPieceUser.proto";
+import "data/TextPieceGift.proto";
+import "data/TextPieceHeart.proto";
+import "data/TextPiecePatternRef.proto";
+import "data/TextPieceImage.proto";
+// 更新时间 2024-04-29
+message TextPiece {
+    // 类型，可能表示文本片段的类型，例如普通文本、链接、特殊标记等
+    int32 type = 1;
+    
+    // 格式，包含文本片段的格式信息，如颜色、大小等
+    TextFormat format = 2;
+    
+    // 字符串值，对于某些类型的文本片段，这里可能存储实际的字符串文本
+    string string_value = 11;
+    
+    // 用户值，可能包含与用户相关的信息，如用户名或用户ID
+    TextPieceUser user_value = 21;
+    
+    // 礼物值，可能包含礼物信息，如礼物名称或ID
+    TextPieceGift gift_value = 22;
+    
+    // 爱心值，可能包含与爱心相关的信息，如爱心的数量或类型
+    TextPieceHeart heart_value = 23;
+    
+    // 模式引用值，可能包含对预定义模式的引用
+    TextPiecePatternRef pattern_ref_value = 24;
+    
+    // 图像值，可能包含与图像相关的信息，如图像URL或图像ID
+    TextPieceImage image_value = 25;
+  }

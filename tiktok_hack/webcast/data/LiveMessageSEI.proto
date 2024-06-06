@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package tiktok_hack;
+
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.data";
+option go_package = "tiktok_hack/generated/data";
+import "data/LiveMessageID.proto";
+
+// 更新时间 2024-04-29
+message LiveMessageSEI {
+    // 唯一标识，可能用于唯一标识一条直播消息
+    LiveMessageID unique_id = 1;
+    
+    // 时间戳，可能表示消息的时间点，通常以毫秒为单位
+    int64 timestamp = 2;
+  }
+  

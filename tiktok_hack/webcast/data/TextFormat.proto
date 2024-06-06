@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "tiktok_hack/generated/data";
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.data";
+
+// 更新时间 2024-06-06
+message TextFormat {
+    // 颜色，可能以字符串形式存储，如十六进制颜色代码
+    string color = 1;
+    
+    // 是否加粗
+    bool bold = 2;
+    
+    // 是否斜体
+    bool italic = 3;
+    
+    // 字重，可能是一个整数，表示字体的粗细程度
+    int32 weight = 4;
+    
+    // 斜体角度，可能表示斜体字的倾斜角度
+    int32 italic_angle = 5;
+    
+    // 字体大小
+    int32 font_size = 6;
+    
+    // 是否使用高亮颜色
+    bool use_heighlight_color = 7;  // 假设字段名是 "use_highlight_color"，这里根据实际情况调整
+  
+    // 是否使用远程颜色，可能表示颜色信息是从远程配置或资源中获取
+    bool use_remote_color = 8;
+  }

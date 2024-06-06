@@ -1,0 +1,395 @@
+syntax = "proto3";
+
+package tiktok_hack;
+
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.data";
+option go_package = "tiktok_hack/generated/data";
+import "data/Image.proto";
+
+// 更新时间 2024-06-06
+message User {
+    // 用户唯一标识符
+    int64 id = 1;
+    
+    // 以下字段已被弃用
+    int64 deprecated1 = 2;  // 已弃用的字段1
+    int32 deprecated2 = 4;  // 已弃用的字段2
+    int32 deprecated3 = 6;  // 已弃用的字段3
+    int64 deprecated4 = 7;  // 已弃用的字段4
+    string deprecated5 = 8;  // 已弃用的字段5
+    int32 deprecated6 = 13;  // 已弃用的字段6
+    string deprecated7 = 14;  // 已弃用的字段7
+    int32 deprecated8 = 20;  // 已弃用的字段8
+    int64 deprecated21 = 41;  // 已弃用的字段21
+  
+    // 用户昵称
+    string nickname = 3;
+    
+    // 用户个人简介
+    string bio_description = 5;
+    
+    // 用户头像，可能有多种尺寸
+    Image avatar_thumb = 9;  // 缩略图尺寸的头像
+    Image avatar_medium = 10;  // 中等尺寸的头像
+    Image avatar_large = 11;  // 大尺寸的头像
+    
+    // 用户的认证状态
+    bool verified = 12;
+    
+    // 用户状态
+    int32 status = 15;
+    
+    // 用户创建和修改的时间戳
+    int64 create_time = 16;  // 创建时间
+    int64 modify_time = 17;  // 修改时间
+    
+    // 用户的隐私状态
+    int32 secret = 18;
+    
+    // 用户分享的二维码统一资源标识符
+    string share_qrcode_uri = 19;
+    
+    // 用户的徽章图片列表
+    repeated Image badge_image_list = 21;  // 徽章图片列表
+    
+    // 关注信息，可能包含关注者数量等
+    FollowInfo follow_info = 22;
+    
+    // 用户的付费等级
+    PayGrade pay_grade = 23;
+    
+    // 用户的粉丝俱乐部信息
+    FansClub fans_club = 24;
+    
+    // 用户的边框信息，可能用于界面展示
+    Border border = 25;
+    
+    // 特殊标识符，具体用途未知
+    string special_id = 26;
+    
+    // 头像边框图片
+    Image avatar_border = 27;
+    
+    // 勋章图片
+    Image medal = 28;
+    
+    // 实时图标列表
+    repeated Image real_time_icons = 29;
+    
+    // 新实时图标列表
+    repeated Image new_real_time_icons = 30;
+    
+    // 顶级VIP编号
+    int64 top_vip_no = 31;
+    
+    // 用户属性
+    UserAttr user_attr = 32;
+    
+    // 用户自己的房间信息
+    OwnRoom own_room = 33;
+    
+    // 用户的付费积分
+    int64 pay_score = 34;
+    
+    // 用户的票数计数
+    int64 ticket_count = 35;
+    
+    // 主播信息
+    AnchorInfo anchor_info = 36;
+    
+    // 连麦统计信息
+    int32 link_mic_stats = 37;
+    
+    // 用户展示ID
+    string display_id = 38;
+    
+    // 是否具有商业权限
+    bool with_commerce_permission = 39;
+    
+    // 是否具有融合店铺入口
+    bool with_fusion_shop_entry = 40;
+    
+    // 已弃用的字段9
+    int32 deprecated9 = 48;
+    
+    // 用户活动信息
+    ActivityInfo activity_reward = 49;
+    
+    // 已弃用的字段10
+    int32 deprecated10 = 50;
+    
+    // 已弃用的字段11
+    int32 deprecated11 = 51;
+    
+    // 个人卡片图片
+    Image personal_card = 52;
+    
+    // 认证信息
+    AuthenticationInfo authentication_info = 53;
+    
+    // 已弃用的字段12
+    int32 deprecated12 = 54;
+    
+    // 已弃用的字段13
+    int32 deprecated13 = 55;
+    
+    // 已弃用的字段14
+    DeprecatedType6 deprecated14 = 56;
+    
+    // 媒体徽章图片列表
+    repeated Image media_badge_image_list = 57;
+    
+    // 已弃用的字段15
+    int32 deprecated15 = 58;
+    
+    // 用户VIP信息
+    UserVIPInfo user_vip_info = 59;
+    
+    // 商业配置ID列表
+    repeated int64 commerce_webcast_config_ids = 60;
+    
+    // 边框列表
+    repeated Border border_list = 61;
+    
+    // 组合徽章信息
+    ComboBadgeInfo combo_badge_info = 62;
+    
+    // 关注信息
+    SubscribeInfo subscribe_info = 63;
+    
+    // 徽章列表
+    repeated BadgeStruct badge_list = 64;
+    
+    // 薄荷型标签列表
+    repeated int64 mint_type_label = 65;
+    
+    // 粉丝俱乐部信息
+    FansClubInfo fans_club_info = 66;
+    
+    // 以下字段用于设置用户的隐私选项
+    bool deprecated19 = 1001;  // 已弃用的字段19
+    bool allow_find_by_contacts = 1002;  // 是否允许通过联系人查找
+    bool allow_others_download_video = 1003;  // 是否允许他人下载视频
+    bool allow_others_download_when_sharing_video = 1004;  // 是否允许分享视频时他人下载
+    bool allow_share_show_profile = 1005;  // 是否允许在分享中展示个人资料
+    bool allow_show_in_gossip = 1006;  // 是否允许在八卦中展示
+    bool allow_show_my_action = 1007;  // 是否允许展示我的动作
+    bool allow_strange_comment = 1008;  // 是否允许陌生人评论
+    bool allow_unfollower_comment = 1009;  // 是否允许未关注者评论
+    bool allow_use_linkmic = 1010;  // 是否允许使用连麦功能
+    
+    // 主播等级
+    AnchorLevel anchor_level = 1011;
+    
+    // 用户的背景图片URL
+    string bg_img_url = 1013;
+    
+    // 已弃用的字段18
+    string deprecated18 = 1014;
+    
+    // 已弃用的字段16
+    bool deprecated16 = 1015;
+    
+    // 用户的屏蔽状态
+    int32 block_status = 1016;
+    
+    // 用户的评论限制
+    int32 comment_restrict = 1017;
+    
+    // 用户的星座
+    string constellation = 1018;
+    
+    // 是否禁用Ichat
+    int32 disable_ichat = 1019;
+    
+    // 启用Ichat图片的标识符
+    int64 enable_ichat_img = 1020;
+    
+    // 用户的经验值
+    int32 exp = 1021;
+    
+    // 粉丝票数量
+    int64 fan_ticket_count = 1022;
+    
+    // 是否折叠陌生人聊天
+    bool fold_stranger_chat = 1023;
+    
+    // 关注状态
+    int64 follow_status = 1024;
+    
+    // 已弃用的字段28
+    bool deprecated28 = 1025;
+    
+    // 已弃用的字段29
+    string deprecated29 = 1026;
+    
+    // Ichat限制类型
+    int32 ichat_restrict_type = 1027;
+    
+    // 用户的ID字符串
+    string id_str = 1028;
+    
+    // 是否是关注者
+    bool is_follower = 1029;
+    
+    // 是否正在关注
+    bool is_following = 1030;
+    
+    // 是否需要个人资料引导
+    bool need_profile_guide = 1031;
+    
+    // 付费积分
+    int64 pay_scores = 1032;
+    
+    // 推送评论状态
+    bool push_comment_status = 1033;
+    
+    // 推送点赞
+    bool push_digg = 1034;
+    
+    // 推送关注
+    bool push_follow = 1035;
+    
+    // 推送好友动作
+    bool push_friend_action = 1036;
+    
+    // 推送Ichat
+    bool push_ichat = 1037;
+    
+    // 推送状态
+    bool push_status = 1038;
+    
+    // 推送视频发布
+    bool push_video_post = 1039;
+    
+    // 推送视频推荐
+    bool push_video_recommend = 1040;
+    
+    // 用户统计信息
+    UserStats stats = 1041;
+    
+    // 已弃用的字段17
+    bool deprecated17 = 1042;
+    // 认证理由
+  string verified_reason = 1043;
+  
+  // 是否具有车辆管理权限
+  bool with_car_management_permission = 1044;
+  
+  // 即将到来的活动列表
+  repeated LiveEventInfo upcoming_event_list = 1045;
+  
+  // SCM标签
+  string scm_label = 1046;
+  
+  // 电商入口信息
+  EcommerceEntrance ecommerce_entrance = 1047;
+  
+  // 是否被屏蔽
+  bool is_block = 1048;
+  
+  // 是否已订阅
+  bool is_subscribe = 1090;
+
+  // 以下定义了 User 消息中的嵌套消息类型，这些类型可能用于存储特定类型的数据
+  message FollowInfo {
+    // 关注信息的字段定义
+  }
+
+  message PayGrade {
+    // 付费等级的字段定义
+  }
+
+  message FansClub {
+    // 粉丝俱乐部的字段定义
+  }
+
+  message Border {
+    // 边框信息的字段定义
+  }
+
+  message UserAttr {
+    // 用户属性的字段定义
+  }
+
+  message OwnRoom {
+    // 用户自己的房间信息字段定义
+  }
+
+  message AnchorInfo {
+    // 主播信息的字段定义
+  }
+
+  message UserVIPInfo {
+    // 用户VIP信息的字段定义
+  }
+
+  message ComboBadgeInfo {
+    // 组合徽章信息的字段定义
+  }
+
+  message SubscribeInfo {
+    // 关注信息的字段定义
+  }
+
+  message BadgeStruct {
+    // 徽章结构的字段定义
+  }
+
+  message ActivityInfo {
+    // 活动信息的字段定义
+  }
+
+  message DeprecatedType1 {
+    // 已弃用类型的字段定义
+  }
+
+  message DeprecatedType4 {
+    // 已弃用类型的字段定义
+  }
+
+  message DeprecatedType5 {
+    // 已弃用类型的字段定义
+  }
+
+  message DeprecatedType6 {
+    // 已弃用类型的字段定义
+  }
+
+  message AuthenticationInfo {
+    // 认证信息的字段定义
+  }
+
+  message LiveEventInfo {
+    // 直播事件信息的字段定义
+  }
+
+  message EcommerceEntrance {
+    // 电商入口信息的字段定义
+  }
+
+  message UserStats {
+    // 用户统计信息的字段定义
+  }
+
+  message AnchorLevel {
+    // 主播等级的字段定义
+  }
+}
+message FansClubInfo {
+    // 是否休眠，可能表示粉丝等级是否处于非活动状态
+    bool is_sleeping = 1;
+    
+    // 粉丝等级，可能表示用户的粉丝等级或阶段
+    int64 fans_level = 2;
+    
+    // 粉丝得分，可能表示用户的粉丝活跃度或贡献得分
+    int64 fans_score = 3;
+    
+    // 徽章图片，可能表示粉丝等级对应的徽章或标识图片
+    Image badge = 4;
+    
+    // 粉丝数量，可能表示用户的粉丝总数
+    int64 fans_count = 5;
+  }

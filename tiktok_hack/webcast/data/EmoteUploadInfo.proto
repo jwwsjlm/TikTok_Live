@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "tiktok_hack/generated/data";
+import "data/User.proto";
+message EmoteUploadInfo {
+    // 用户ID，可能用于标识上传表情的用户
+    int64 user_id = 1;
+    
+    // 表情上传来源，可能用于表示表情上传的来源或渠道
+    int32 emote_upload_source = 2;
+    
+    // 用户信息，可能包含上传用户的详细信息
+    User user_info = 3;
+    
+    // 用户ID字符串，可能用于存储用户的ID字符串表示
+    string user_id_str = 4;
+  }
+  

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package tiktok_hack;
+
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.im";
+option go_package = "Sunny/tiktok_hack/generated/im";
+import "im/PushHeader.proto";
+
+//更新时间 : 2024-06-26
+message PushFrame {
+  // 字段类型和编号基于 JavaScript 代码中的 case 语句
+  uint64 seqid = 1;      // 序列号
+  uint64 logid = 2;      // 日志ID
+  uint64 service = 3;    // 服务ID
+  uint64 method = 4;     // 方法ID
+  repeated PushHeader headers = 5;  // 可重复的 PushHeader 消息
+  string payloadEncoding = 6;      // 负载编码
+  string payloadType = 7;          // 负载类型
+  bytes payload = 8;               // 负载数据
+}

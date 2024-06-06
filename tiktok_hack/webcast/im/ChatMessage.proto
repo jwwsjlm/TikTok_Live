@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package tiktok_hack;
+
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.im";
+option go_package = "Sunny/tiktok_hack/generated/im";
+
+import "im/Common.proto";
+import "im/PublicAreaCommon.proto";
+import "im/PublicAreaMessageCommon.proto";
+import "im/CommentQualityScore.proto";
+import "data/UserIdentity.proto";
+import "data/User.proto";
+import "data/Image.proto";
+import "data/MsgFilter.proto";
+import "data/Emote.proto";
+//更新时间 : 2024-06-6
+message ChatMessage {
+  // 通用信息，可能包含聊天消息的公共属性
+  Common common = 1;
+  
+  // 用户信息，可能包含发送消息的用户信息
+  User user = 2;
+  
+  // 消息内容，可能包含消息的文本内容
+  string content = 3;
+  
+  // 对发送者可见，可能表示消息是否对发送者可见
+  bool visible_to_sender = 4;
+  
+  // 背景图像，可能包含消息背景的图像信息
+  Image background_image = 5;
+  
+  // 全屏文本颜色，可能表示全屏消息文本的颜色
+  string full_screen_text_color = 6;
+  
+  // 背景图像V2，可能包含新版本的消息背景图像信息
+  Image background_image_v2 = 7;
+  
+  // 公共区域通用信息，可能包含公共聊天区域的通用属性
+  PublicAreaCommon public_area_common = 9;
+  
+  // 礼物图像，可能包含礼物消息的图像信息
+  Image gift_image = 10;
+  
+  // 输入类型，可能表示输入或发送消息的方式
+  int32 input_type = 11;
+  
+  // @用户信息，可能包含被@的用户信息
+  User at_user = 12;
+  
+  // 表情与索引，可能包含消息中的表情及其索引
+  repeated EmoteWithIndex emotes = 13;
+  
+  // 内容语言，可能表示消息内容的语言
+  string content_language = 14;
+  
+  // 消息过滤器，可能包含消息过滤的规则或参数
+  MsgFilter msg_filter = 15;
+  
+  // 快速聊天场景，可能表示快速聊天的特定场景
+  int32 quick_chat_scene = 16;
+  
+  // 社区标记状态，可能表示消息在社区中的标记或举报状态
+  int32 community_flagged_status = 17;
+  
+  // 用户身份，可能包含用户的身份信息
+  UserIdentity user_identity = 18;
+  
+  // 评论质量评分，可能包含消息的评分或反馈
+  repeated CommentQualityScore comment_quality_scores = 19;
+  
+  // 评论标签，可能包含消息的标签或分类
+  repeated int32 comment_tag = 20;
+  
+  // 公共区域消息通用信息，可能包含公共聊天消息的通用属性
+  PublicAreaMessageCommon public_area_message_common = 21;
+  
+  // 屏幕时间，可能表示消息在屏幕上显示的时间
+  int64 screen_time = 22;
+}
+
+message EmoteWithIndex {
+  // 索引，可能用于表示表情在列表中的位置或序号
+  int64 index = 1;
+  
+  // 表情信息，可能包含表情的详细描述或引用
+  Emote emote = 2;
+}

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "tiktok_hack/generated/data";
+import "data/PatternRef.proto";
+
+message TextPieceGift {
+    // 礼物ID，唯一标识一个礼物
+    int64 gift_id = 1;
+    
+    // 礼物名称引用，可能用于引用一个预定义的礼物名称
+    PatternRef name_ref = 2;
+    
+    // 展示类型，指示礼物展示的方式或风格
+    int32 show_type = 3;
+    
+    // 礼物颜色ID，可能用于定义礼物的显示颜色
+    int64 color_id = 4;
+  }
+  

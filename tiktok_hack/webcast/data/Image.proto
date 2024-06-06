@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "tiktok_hack/generated/data";
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.data";
+
+// 更新时间 2024-04-29
+message Image {
+    // 图像URL列表，可能包含多个不同尺寸或格式的图像URL
+    repeated string url_list = 1;
+    
+    // 图像统一资源标识符，可能用于唯一标识图像
+    string uri = 2;
+    
+    // 图像高度，可能表示图像的垂直像素尺寸
+    int64 height = 3;
+    
+    // 图像宽度，可能表示图像的水平像素尺寸
+    int64 width = 4;
+    
+    // 图像平均颜色，可能用于表示图像的主导颜色
+    string avg_color = 5;
+    
+    // 图像类型，可能用于指示图像格式或来源
+    int32 image_type = 6;
+    
+    // 打开网页的URL，可能用于指示点击图像后打开的网页地址
+    string open_web_url = 7;
+    
+    // 图像内容，可能包含图像的详细内容描述或其他元数据
+    Content content = 8;
+    
+    // 是否为动画图像，可能用于指示图像是否是动态的
+    bool is_animated = 9;
+    
+    // Image_Content 嵌套消息类型，用于存储图像内容的相关信息
+
+  }
+// Content 嵌套消息类型，用于存储图像内容的相关信息
+message Content {
+    // 图像内容名称，可能用于描述图像内容的名称或标题
+    string name = 1;
+    
+    // 字体颜色，可能用于定义图像中文字的颜色
+    string font_color = 2;
+    
+    // 图像内容等级，可能用于表示图像内容的重要性或分类等级
+    int64 level = 3;
+  }

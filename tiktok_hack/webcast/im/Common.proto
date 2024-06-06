@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "Sunny/tiktok_hack/generated/im";
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.im";
+
+import "data/LiveMessageID.proto";
+import "data/LiveMessageSEI.proto";
+import "data/Text.proto";
+//import "tiktok_hack/webcast/im/Message.proto";
+
+//更新时间 : 2024-06-6
+message Common {
+    // 方法名称，可能表示消息的处理方式或类型
+    string method = 1;
+    
+    // 消息的唯一标识符
+    int64 msg_id = 2;
+    
+    // 房间或会话的唯一标识符
+    int64 room_id = 3;
+    
+    // 消息创建的时间（Unix 时间戳）
+    int64 create_time = 4;
+    
+    // 监控用途的整数，具体含义根据实际业务确定
+    int32 monitor = 5;
+    
+    // 是否向用户展示此消息
+    bool is_show_msg = 6;
+    
+    // 消息描述，可能包含消息内容的简短说明
+    string describe = 7;
+    
+    // 展示文本，可能包含要展示给用户的消息文本
+    Text display_text = 8;
+    
+    // 折叠类型，可能用于控制消息在 UI 中的展示方式
+    int64 fold_type = 9;
+    
+    // 主播折叠类型，可能与主播相关的消息展示方式
+    int64 anchor_fold_type = 10;
+    
+    // 消息优先级得分，可能用于确定消息展示的优先级
+    int64 priority_score = 11;
+    
+    // 日志 ID，可能用于日志记录和消息追踪
+    string log_id = 12;
+    
+    // 消息处理过滤器键，可能用于消息的过滤逻辑
+    string msg_process_filter_k = 13;
+    
+    // 消息处理过滤器值，与过滤器键一起使用
+    string msg_process_filter_v = 14;
+    
+    // 消息来源 IDC，可能用于标识消息来源的数据中心
+    string from_idc = 15;
+    
+    // 消息目标 IDC，可能用于标识消息发送到的数据中心
+    string to_idc = 16;
+    
+    // 过滤消息标签列表，可能用于消息分类或过滤
+    repeated string filter_msg_tags = 17;
+    
+    // 附加信息，可能包含额外的上下文信息或元数据
+    LiveMessageSEI sei = 18;
+    
+    // 依赖的根 ID，可能用于消息之间的依赖关系
+    LiveMessageID depend_root_id = 19;
+    
+    // 依赖 ID，可能用于消息之间的依赖关系
+    LiveMessageID depend_id = 20;
+    
+    // 主播优先级得分，可能与主播相关的消息优先级
+    int64 anchor_priority_score = 21;
+    
+    // 房间消息热度等级，可能用于衡量消息的热度或重要性
+    int64 room_message_heat_level = 22;
+    
+    // Web 端折叠类型，可能用于 Web 界面中的消息展示方式
+    int64 fold_type_for_web = 23;
+    
+    // 主播 Web 端折叠类型，可能与主播相关在 Web 界面中的消息展示方式
+    int64 anchor_fold_type_for_web = 24;
+    
+    // 客户端发送时间，可能记录客户端实际发送消息的时间
+    int64 client_send_time = 25;
+    
+    // 分发策略，可能用于控制消息如何被分发到不同的客户端或服务
+    int32 dispatch_strategy = 26;
+  }

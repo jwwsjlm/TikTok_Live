@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "tiktok_hack/generated/data";
+
+message TextPiecePatternRef {
+    // 模式键，用于唯一标识或引用一个预定义的模式
+    string key = 1;
+    
+    // 默认模式，可能指定模式的默认表现形式或格式
+    string default_pattern = 2;
+  }

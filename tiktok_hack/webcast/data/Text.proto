@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package tiktok_hack;
+
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.data";
+option go_package = "tiktok_hack/generated/data";
+import "data/TextFormat.proto";
+import "data/TextPiece.proto";
+
+// 更新时间 2024-06-06
+message Text {
+    // 键，可能用于唯一标识文本或作为字典的键
+    string key = 1;
+    
+    // 默认模式，可能指定文本的默认展示格式或样式
+    string default_pattern = 2;
+    
+    // 默认格式，可能包含文本的详细格式信息
+    TextFormat default_format = 3;
+    
+    // 文本片段列表，可能用于存储组成完整文本的各个部分
+    repeated TextPiece pieces = 4;
+  }

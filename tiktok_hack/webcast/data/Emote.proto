@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "tiktok_hack/generated/data";
+import "data/Image.proto";
+import "data/AuditInfo.proto";
+import "data/EmoteUploadInfo.proto";
+message Emote {
+    // 表情ID，唯一标识一个表情
+    string emote_id = 1;
+    
+    // 表情图像，可能包含表情的图像信息
+    Image image = 2;
+    
+    // 审核状态，可能表示表情的审核结果或状态
+    int32 audit_status = 3;
+    
+    // 唯一标识符，可能用于唯一标识表情的UUID
+    string uuid = 4;
+    
+    // 表情类型，可能用于分类表情
+    int32 emote_type = 5;
+    
+    // 内容来源，可能表示表情内容的来源
+    int32 content_source = 6;
+    
+    // 表情私有类型，可能用于表示表情的私有分类或属性
+    int32 emote_private_type = 7;
+    
+    // 包ID，可能用于标识表情所属的包或集合
+    string package_id = 8;
+    
+    // 审核信息，可能包含更详细的审核结果或相关信息
+    AuditInfo audit_info = 9;
+    
+    // 奖励条件，可能表示与表情相关的奖励或解锁条件
+    int32 reward_condition = 10;
+    
+    // 表情上传信息，可能包含表情上传的详细数据
+    EmoteUploadInfo emote_upload_info = 11;
+    
+    // 创建时间，可能表示表情创建的时间
+    int64 create_time = 12;
+  }
+  
