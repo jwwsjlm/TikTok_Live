@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "Sunny/tiktok_hack/generated/data";
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.data";
+
+message Indicator {
+    string key = 1;
+    int64 op = 2; // @warning Enum not found, should be Op
+  }
+  

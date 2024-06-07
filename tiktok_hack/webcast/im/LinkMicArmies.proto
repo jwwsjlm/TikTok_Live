@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "Sunny/tiktok_hack/generated/im";
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.im";
+
+import "im/Common.proto";
+import "data/Image.proto";
+import "data/LinkMicArmiesItems.proto";
+message LinkMicArmies {
+    Common common = 1;
+    uint64 id = 2;
+    repeated LinkMicArmiesItems battleItems = 3;
+    uint64 id2 = 4;
+    uint64 timeStamp1 = 5;
+    uint64 timeStamp2 = 6;
+    int32 battleStatus = 7; // SHOULD BE AN ENUM
+    uint64 data1 = 8;
+    uint64 data2 = 9;
+    uint32 data3 = 10;
+    Image Image = 11;
+    uint32 data4 = 12;
+    uint32 data5 = 13;
+  }

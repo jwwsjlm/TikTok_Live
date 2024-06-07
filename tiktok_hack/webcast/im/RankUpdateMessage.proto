@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "Sunny/tiktok_hack/generated/im";
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.im";
+
+import "im/Common.proto";
+import "data/Text.proto";
+
+message RankUpdateMessage {
+    Common common = 1;
+    repeated RankUpdate updatesList = 2;
+    int64 groupType = 3; // @warning Enum not found, should be GroupType
+    int64 priority = 5;
+    repeated RankTabInfo tabsList = 6;
+    bool isAnimationLoopPlay = 7;
+    bool animationLoopForOff = 8;
+  
+  
+    message RankTabInfo {
+      int64 rankType = 1; // @warning Enum not found, should be RankType
+      string title = 2;
+      Text titleText = 3;
+      int64 listLynxType = 4;
+    }
+  
+    // @RankUpdate
+    // proto.webcast.im.RankUpdateMessage
+    message RankUpdate {
+      int64 rankType = 1; // @warning Enum not found, should be RankType
+      int64 ownerRank = 2;
+      Text defaultContent = 3;
+      bool showEntranceAnimation = 5;
+      int64 countdown = 6;
+      int64 relatedTabRankType = 8; // @warning Enum not found, should be RelatedTabRankType
+      int64 requestFirstShowType = 9; // @warning Enum not found, should be RequestFirstShowType
+      int64 supportedVersion = 10;
+      bool owneronrank = 11;
+    }
+  }

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package tiktok_hack;
+
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.im";
+option go_package = "Sunny/tiktok_hack/generated/im";
+import "im/Common.proto";
+import "data/Indicator.proto";
+import "data/Goal.proto";
+import "data/Image.proto";
+//更新时间 : 2024-06-08
+message WGoalUpdateMessage {
+    Common common = 1;
+    Indicator indicator = 2;
+    Goal goal = 3;
+    int64 contributorId = 4;
+    Image contributorAvatar = 5;
+    string contributorDisplayId = 6;
+    //  SubGoal contributeSubgoal = 7;
+    int64 contributeCount = 9;
+    int64 contributeScore = 10;
+    int64 giftRepeatCount = 11;
+    string contributorIdStr = 12;
+    bool pin = 13;
+    bool unpin = 14;
+    // GoalPinInfo pinInfo = 15;
+  }

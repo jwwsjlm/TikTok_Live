@@ -1,7 +1,7 @@
 package main
 
 import (
-	Tk "Sunny/tiktok_hack/generated/im"
+	tiktokhack "Sunny/tiktok_hack/generated"
 	"bytes"
 	"compress/gzip"
 	"fmt"
@@ -49,7 +49,7 @@ func WSCallback(Conn *SunnyNet.WsConn) {
 	//捕获到数据可以修改,修改空数据,取消发送/接收
 	message := Conn.GetMessageBody()
 	//fmt.Println("ws数据", Conn.GetMessageBody())
-	PushFrame := &Tk.PushFrame{}
+	PushFrame := &tiktokhack.WebcastPushFrame{}
 	err := proto.Unmarshal(message, PushFrame)
 	if err != nil {
 		log.Println("解析消息失败：", err)
@@ -61,15 +61,16 @@ func WSCallback(Conn *SunnyNet.WsConn) {
 		return
 	}
 	n := false
-	for _, p := range PushFrame.Headers {
-		if p.Key == "compress_type" {
-			if p.Value == "gzip" {
+	for v, p := range PushFrame.Headers {
+		if v == "compress_type" {
+			if p == "gzip" {
 				n = true
+				continue
 			}
 		}
 	}
 	//消息为gzip压缩
-	if n == true {
+	if n == true && PushFrame.PayloadType == "msg" {
 		gzipReader, err := gzip.NewReader(bytes.NewReader(PushFrame.Payload))
 		defer gzipReader.Close()
 		if err != nil {
@@ -78,13 +79,13 @@ func WSCallback(Conn *SunnyNet.WsConn) {
 		}
 
 		uncompressedData, _ := io.ReadAll(gzipReader)
-		response := &Tk.Response{}
+		response := &tiktokhack.WebcastResponse{}
 		err = proto.Unmarshal(uncompressedData, response)
 
-		for _, v := range response.MessagesList {
+		for _, v := range response.Messages {
 			msg, err := Match(v.Method)
 			if err != nil {
-				log.Println("未知的消息类型", err)
+				log.Println("未知的消息类型", err, PushFrame.PayloadType)
 				continue
 			}
 			err = proto.Unmarshal(v.Payload, msg)
@@ -92,12 +93,12 @@ func WSCallback(Conn *SunnyNet.WsConn) {
 				log.Println("解析消息失败3：", err)
 				continue
 			}
-			_, err = protojson.Marshal(msg)
+			marshal, err := protojson.Marshal(msg)
 			if err != nil {
 				log.Println("protojson:unmarshal:", err)
 				return
 			}
-			//log.Println(string(marshal))
+			log.Println(string(marshal))
 
 		}
 		//log.Println(response.)
@@ -107,19 +108,26 @@ func WSCallback(Conn *SunnyNet.WsConn) {
 func Match(Method string) (protoreflect.ProtoMessage, error) {
 	switch Method {
 	case "WebcastChatMessage":
-		return &Tk.ChatMessage{}, nil
+		return &tiktokhack.WebcastChatMessage{}, nil
 	case "WebcastMemberMessage":
-		return &Tk.MemberMessage{}, nil
+		return &tiktokhack.WebcastMemberMessage{}, nil
 	case "WebcastRoomUserSeqMessage":
-		return &Tk.RoomUserSeqMessage{}, nil
+		return &tiktokhack.WebcastRoomUserSeqMessage{}, nil
 	case "WebcastLikeMessage":
-		return &Tk.LikeMessage{}, nil
+		return &tiktokhack.WebcastLikeMessage{}, nil
 	case "WebcastSocialMessage":
-		return &Tk.SocialMessage{}, nil
+		return &tiktokhack.WebcastSocialMessage{}, nil
 	case "WebcastGiftMessage":
-		return &Tk.GiftMessage{}, nil
+		return &tiktokhack.WebcastGiftMessage{}, nil
 	case "WebcastImDeleteMessage":
-		return &Tk.ImDeleteMessage{}, nil
+		return &tiktokhack.WebcastImDeleteMessage{}, nil
+	case "WebcastUnauthorizedMemberMessage":
+		return &tiktokhack.WebcastUnauthorizedMemberMessage{}, nil
+	case "WebcastRankUpdateMessage":
+		return &tiktokhack.WebcastRankUpdateMessage{}, nil
+	case "WebcastLinkMicArmies":
+		return &tiktokhack.WebcastLinkMicArmies{}, nil
+
 	default:
 		return nil, fmt.Errorf("未知的消息类型:" + Method)
 	}

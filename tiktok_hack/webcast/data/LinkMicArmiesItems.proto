@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "Sunny/tiktok_hack/generated/data";
+import "data/User.proto";
+message LinkMicArmiesItems {
+    uint64 hostUserId = 1;
+    repeated LinkMicArmiesGroup battleGroups = 2;
+  
+    message LinkMicArmiesGroup {
+      repeated User users = 1;
+      uint32 points = 2;
+    }
+  }

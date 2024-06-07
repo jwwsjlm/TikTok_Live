@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "Sunny/tiktok_hack/generated/data";
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.data";
+import "data/Image.proto";
+import "data/BadgeStruct.proto";
+message Goal {
+    int64 id = 1;
+    // TextType type = 2; // Enum
+    // GoalStatus status = 3; // Enum
+    // repeated SubGoal subGoalsList = 4;
+    string description = 5;
+    int32 auditStatus = 6;
+    // CycleType cycleType = 7; // Enum
+    int64 startTime = 8;
+    int64 expireTime = 9;
+    int64 realFinishTime = 10;
+    repeated GoalContributor contributorsList = 11;
+    int32 contributorsLength = 12;
+    string idStr = 13;
+    string auditDescription = 14;
+    GoalStats stats = 15;
+  
+    message GoalStats {
+      int64 totalCoins = 1;
+      int64 totalContributor = 2;
+    }
+  
+    message GoalContributor {
+      int64 userId = 1;
+      Image avatar = 2;
+      string displayId = 3;
+      int64 score = 4;
+      string userIdStr = 5;
+      bool inRoom = 6;
+      bool isFriend = 7;
+      repeated BadgeStruct badgeList = 8;
+      bool followByOwner = 9;
+      bool isFistContribute = 10;
+    }
+  
+  }

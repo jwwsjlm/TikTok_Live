@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "Sunny/tiktok_hack/generated/im";
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.im";
+
+import "im/Common.proto";
+import "data/Text.proto";
+message UnauthorizedMemberMessage {
+    Common common = 1;
+    int32 action = 2;
+    Text nickNamePrefix = 3;
+    string nickName = 4;
+    Text enterText = 5;
+  }

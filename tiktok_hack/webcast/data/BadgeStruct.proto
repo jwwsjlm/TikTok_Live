@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package tiktok_hack;
+option go_package = "Sunny/tiktok_hack/generated/data";
+import "data/Image.proto";
+
+message BadgeStruct {
+    BadgeDisplayType displayType = 1; // Enum
+    oneof badgeType
+    {
+      ImageBadge image = 20;
+      TextBadge text = 21;
+      StringBadge str = 22;
+      CombineBadge combine = 23;
+    }
+  
+    message CombineBadge {
+      Image icon = 2;
+      TextBadge text = 3;
+      string str = 4;
+      // repeated PaddingInfo padding = 5;
+      // FontStyle fontStyle = 6;
+      ProfileCardPanel profileCardPanel = 7;
+      CombineBadgeBackground background = 11;
+      CombineBadgeBackground backgroundDarkMode = 12;
+      bool iconAutoMirrored = 13;
+      bool backgroundAutoMirrored = 14;
+      int32 publicScreenShowStyle = 15;
+      int32 personalCardShowStyle = 16;
+      int32 ranklistOnlineAudienceShowStyle = 17;
+      int32 multiGuestShowStyle = 18;
+      //  repeated PaddingInfo paddingNewFont = 20;
+    }
+  
+    message ProfileContent {
+      bool useContent = 1;
+      repeated IconConfig iconList = 2;
+      NumberConfig numberConfig = 3;
+    }
+  
+    message ProjectionConfig {
+      bool useProjection = 1;
+      Image icon = 2;
+    }
+  
+    message NumberConfig {
+      int64 number = 1;
+      //FontStyle fontStyle = 2;
+      CombineBadgeBackground background = 3;
+    }
+  
+  
+    message ProfileCardPanel {
+      bool useNewProfileCardStyle = 1;
+      //  BadgeTextPosition badgeTextPosition = 2; // Enum
+      ProjectionConfig projectionConfig = 3;
+      ProfileContent profileContent = 4;
+    }
+  
+    message CombineBadgeBackground {
+      Image image = 1;
+      string backgroundColorCode = 2;
+      string borderColorCode = 3;
+    }
+  
+    message ImageBadge {
+      Image image = 2;
+    }
+  
+    message TextBadge {
+      string defaultPattern = 3;
+    }
+  
+    message IconConfig {
+      Image icon = 1;
+      CombineBadgeBackground background = 2;
+    }
+  
+  
+    message StringBadge {
+      string str = 2;
+    }
+  
+    enum DataCase {
+      DATA_NOT_SET = 0;
+      IMAGE = 20;
+      TEXT = 21;
+      STR = 22;
+      COMBINE = 23;
+    }
+  
+    enum BadgeDisplayType {
+      BADGEDISPLAYTYPE_UNKNOWN = 0;
+      BADGEDISPLAYTYPE_IMAGE = 1;
+      BADGEDISPLAYTYPE_TEXT = 2;
+      BADGEDISPLAYTYPE_STRING = 3;
+      BADGEDISPLAYTYPE_COMBINE = 4;
+    }
+  
+  
+  
+  
+    enum Position {
+      POSITIONUNKNOWN = 0;
+      POSITIONLEFT = 1;
+      POSITIONRIGHT = 2;
+    }
+  
+  
+  }
