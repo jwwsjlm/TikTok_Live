@@ -2,6 +2,8 @@
 
 项目灵感来源于：https://github.com/qtgolang/SunnyNet
 
+项目proto来源:https://github.com/isaackogan/TikTokLive
+
 ![20240606192223.jpg](image%2FREADME%2F20240606192223.jpg)
 ![20240606192150.jpg](image%2FREADME%2F20240606192150.jpg)
 具体实现操作.通过代理本地10808端口
