@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package tiktok_hack;
+
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.im";
+option go_package = "Sunny/tiktok_hack/generated/im";
+import "im/Common.proto";
+
+//更新时间 : 2024-06-08
+message ImDeleteMessage {
+    Common common = 1; // 公共字段，可能包含一些基本信息
+    repeated int64 delete_msg_ids = 2; // 被删除的消息ID列表
+    repeated int64 delete_user_ids = 3; // 执行删除操作的用户ID列表
+  }

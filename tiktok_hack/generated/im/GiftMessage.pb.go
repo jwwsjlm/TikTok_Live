@@ -7,11 +7,11 @@
 package im
 
 import (
+	data "Sunny/tiktok_hack/generated/data"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
-	data "Sunny/tiktok_hack/generated/data"
 )
 
 const (

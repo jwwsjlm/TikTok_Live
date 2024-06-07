@@ -1,2 +1,0 @@
-protoc -I. --go_out=../generated --go_opt=paths=source_relative "im\*.proto" "data\*.p
-roto"

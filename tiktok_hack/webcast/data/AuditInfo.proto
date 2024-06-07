@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package tiktok_hack;
-option go_package = "tiktok_hack/generated/data";
+option go_package = "Sunny/tiktok_hack/generated/data";
 message AuditInfo {
     // 违规ID，可能用于唯一标识一次违规或审核事件
     int64 violation_id = 1;

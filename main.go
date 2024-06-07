@@ -7,9 +7,12 @@ import (
 	"fmt"
 	"github.com/qtgolang/SunnyNet/SunnyNet"
 	"github.com/qtgolang/SunnyNet/public"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 	"io"
 	"log"
+	"strings"
 )
 
 var Sunny = SunnyNet.NewSunny()
@@ -38,6 +41,11 @@ func HttpCallback(Conn *SunnyNet.HttpConn) {
 }
 
 func WSCallback(Conn *SunnyNet.WsConn) {
+	//tiktok.com/webcast/im/
+	if strings.Contains(Conn.Url, "webcast/im/") == false {
+		return
+
+	}
 	//捕获到数据可以修改,修改空数据,取消发送/接收
 	message := Conn.GetMessageBody()
 	//fmt.Println("ws数据", Conn.GetMessageBody())
@@ -48,30 +56,73 @@ func WSCallback(Conn *SunnyNet.WsConn) {
 		return
 	}
 	//log.Println(PushFrame.Payload)
-	gzipReader, err := gzip.NewReader(bytes.NewReader(PushFrame.Payload))
-	if err != nil {
-		log.Println("解析消息失败gzip：", err)
+	if PushFrame.PayloadType == "ack" {
+		//心跳包数据不做处理
 		return
-
 	}
-	uncompressedData, _ := io.ReadAll(gzipReader)
-	response := &Tk.Response{}
-	err = proto.Unmarshal(uncompressedData, response)
-	for _, v := range response.MessagesList {
-		//log.Println(v.Method)
-		if v.Method == "WebcastChatMessage" {
-			msg := &Tk.ChatMessage{}
-			err := proto.Unmarshal(v.Payload, msg)
+	n := false
+	for _, p := range PushFrame.Headers {
+		if p.Key == "compress_type" {
+			if p.Value == "gzip" {
+				n = true
+			}
+		}
+	}
+	//消息为gzip压缩
+	if n == true {
+		gzipReader, err := gzip.NewReader(bytes.NewReader(PushFrame.Payload))
+		defer gzipReader.Close()
+		if err != nil {
+			log.Println("解析消息失败gzip：", err, PushFrame.PayloadType)
+			return
+		}
+
+		uncompressedData, _ := io.ReadAll(gzipReader)
+		response := &Tk.Response{}
+		err = proto.Unmarshal(uncompressedData, response)
+
+		for _, v := range response.MessagesList {
+			msg, err := Match(v.Method)
+			if err != nil {
+				log.Println("未知的消息类型", err)
+				continue
+			}
+			err = proto.Unmarshal(v.Payload, msg)
 			if err != nil {
 				log.Println("解析消息失败3：", err)
 				continue
 			}
-			log.Printf("用户名:%s,消息内容:%s\n\n", msg.User.Nickname, msg.Content)
+			_, err = protojson.Marshal(msg)
+			if err != nil {
+				log.Println("protojson:unmarshal:", err)
+				return
+			}
+			//log.Println(string(marshal))
+
 		}
-
+		//log.Println(response.)
 	}
-	//log.Println(response.)
 
+}
+func Match(Method string) (protoreflect.ProtoMessage, error) {
+	switch Method {
+	case "WebcastChatMessage":
+		return &Tk.ChatMessage{}, nil
+	case "WebcastMemberMessage":
+		return &Tk.MemberMessage{}, nil
+	case "WebcastRoomUserSeqMessage":
+		return &Tk.RoomUserSeqMessage{}, nil
+	case "WebcastLikeMessage":
+		return &Tk.LikeMessage{}, nil
+	case "WebcastSocialMessage":
+		return &Tk.SocialMessage{}, nil
+	case "WebcastGiftMessage":
+		return &Tk.GiftMessage{}, nil
+	case "WebcastImDeleteMessage":
+		return &Tk.ImDeleteMessage{}, nil
+	default:
+		return nil, fmt.Errorf("未知的消息类型:" + Method)
+	}
 }
 func TcpCallback(Conn *SunnyNet.TcpConn) {
 	//捕获到数据可以修改,修改空数据,取消发送/接收

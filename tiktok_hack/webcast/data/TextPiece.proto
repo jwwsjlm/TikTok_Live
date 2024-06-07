@@ -4,7 +4,7 @@ package tiktok_hack;
 
 option java_multiple_files = true;
 option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.data";
-option go_package = "tiktok_hack/generated/data";
+option go_package = "Sunny/tiktok_hack/generated/data";
 import "data/TextFormat.proto";
 import "data/TextPieceUser.proto";
 import "data/TextPieceGift.proto";

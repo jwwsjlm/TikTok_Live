@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package tiktok_hack;
-option go_package = "tiktok_hack/generated/data";
+option go_package = "Sunny/tiktok_hack/generated/data";
 import "data/Image.proto";
 import "data/AuditInfo.proto";
 import "data/EmoteUploadInfo.proto";

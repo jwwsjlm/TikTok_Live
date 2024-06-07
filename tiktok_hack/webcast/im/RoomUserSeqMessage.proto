@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package tiktok_hack;
+
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.im";
+option go_package = "Sunny/tiktok_hack/generated/im";
+import "im/Common.proto";
+import "data/User.proto";
+//更新时间 : 2024-06-6
+message RoomUserSeqMessage  {
+ // 假设Common是另一个文件中定义的message
+  Common common = 1;
+  repeated Contributor ranks = 2;
+  string total = 3; // 假设total字段是字符串类型，用于存储int64的文本表示
+  string pop_str = 4;
+  repeated Contributor seats = 5;
+  string popularity = 6; // 假设popularity字段是字符串类型，用于存储int64的文本表示
+  string total_user = 7; // 假设total_user字段是字符串类型，用于存储int64的文本表示
+  string anonymous = 8; // 假设anonymous字段是字符串类型，用于存储int64的文本表示
+}
+message Contributor {
+  int64 score = 1;      // 假设score字段是64位整数
+  User user = 2;        // User消息，需要根据User的定义调整字段类型
+  int64 rank = 3;       // 假设rank字段是64位整数
+  int64 delta = 4;      // 假设delta字段是64位整数
+}

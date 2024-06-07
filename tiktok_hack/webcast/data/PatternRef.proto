@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package tiktok_hack;
-option go_package = "tiktok_hack/generated/data";
+option go_package = "Sunny/tiktok_hack/generated/data";
 message PatternRef {
     // 模式键，用于唯一标识一个模式
     string key = 1;

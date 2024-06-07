@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package tiktok_hack;
+
+option java_multiple_files = true;
+option java_package = "cool.scx.live_room_watcher.impl.tiktok_hack.proto_entity.webcast.im";
+option go_package = "Sunny/tiktok_hack/generated/im";
+import "im/Common.proto";
+import "im/PublicAreaMessageCommon.proto";
+import "data/User.proto";
+
+
+//更新时间 : 2024-06-08
+
+message SocialMessage {
+    Common common = 1; // 公共字段，可能包含一些基本信息
+    User user = 2;     // 用户信息
+    int64 share_type = 3; // 分享类型，具体含义根据业务逻辑确定
+    int64 action = 4;     // 动作类型，同样根据业务逻辑确定
+    string share_target = 5; // 分享目标，可能是URL或其它标识
+    int64 follow_count = 6; // 关注数量
+    int64 share_display_style = 7; // 分享展示样式，可能是枚举类型
+    int64 share_count = 8; // 分享数量
+    PublicAreaMessageCommon public_area_message_common = 9; // 公共区域消息公共字段
+  }

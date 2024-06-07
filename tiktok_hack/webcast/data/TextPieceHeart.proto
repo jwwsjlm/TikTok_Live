@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package tiktok_hack;
-option go_package = "tiktok_hack/generated/data";
+option go_package = "Sunny/tiktok_hack/generated/data";
 
 message TextPieceHeart {
     // 颜色，可能表示心动效果的颜色

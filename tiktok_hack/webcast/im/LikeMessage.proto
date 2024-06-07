@@ -12,17 +12,17 @@ import "data/User.proto";
 import "data/Image.proto";
 import "data/LikeEffect.proto";
 
-//更新时间 : 2024-04-29
-message LikeMessage{
-    Common common = 1;
-    int64 count = 2;
-    string total = 3;
-    string color = 4;
-    User user = 5;
-    string icon = 6;
-    Image iconsList = 7;
-    repeated SpecifiedDisplayText specifiedDisplayTextList = 8;
-    string effectCnt = 9;
-    repeated LikeEffect likeEffectList = 10;
-    PublicAreaMessageCommon publicAreaMessageCommon = 11;
-}
+//更新时间 : 2024-06-08
+message LikeMessage {
+    Common common = 1;               // 假设Common是另一个文件中定义的message
+    int64 count = 2;                // 点赞数量
+    int64 total = 3;                 // 总数量或其它相关计数
+    int64 color = 4;                 // 颜色值，可能是用于图标的颜色
+    User user = 5;                   // 用户信息
+    string icon = 6;                 // 可能是用户头像或图标的URL
+    repeated Image icons = 7;        // 可能表示多个图标或头像
+    repeated SpecifiedDisplayText specified_display_texts = 8;  // 指定显示的文本
+    int64 effect_cnt = 9;            // 特效数量
+    repeated LikeEffect like_effects = 10;  // 点赞特效列表
+    PublicAreaMessageCommon public_area_message_common = 11;  // 公共区域消息公共字段
+  }
