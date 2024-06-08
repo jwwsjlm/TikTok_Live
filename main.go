@@ -27,7 +27,6 @@ func main() {
 	//绑定回调函数
 	Sunny.SetGoCallback(HttpCallback, TcpCallback, WSCallback, UdpCallback)
 
-	fmt.Println("正在运行....")
 	//绑定端口号并启动
 
 	s := Sunny.SetPort(10808)
@@ -45,7 +44,9 @@ func main() {
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		handleWebSocket(upgrader, w, r)
 	})
-
+	fmt.Println("浏览器代理设置为:127.0.0.1:10808")
+	fmt.Println("上游代理地址为:127.0.0.1:30801")
+	fmt.Println("正在运行....")
 	err := http.ListenAndServe(":18080", nil)
 	if err != nil {
 		panic("ListenAndServe: " + err.Error())
@@ -186,7 +187,7 @@ func WSCallback(Conn *SunnyNet.WsConn) {
 			for _, v := range agentlist {
 				v.queue <- marshal
 			}
-			log.Println("队列大小:", len(agentlist))
+			//log.Println("队列大小:", len(agentlist))
 
 		}
 		//log.Println(response.)
