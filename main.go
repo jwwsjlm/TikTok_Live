@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"fmt"
+	"github.com/gorilla/websocket"
 	"github.com/qtgolang/SunnyNet/SunnyNet"
 	"github.com/qtgolang/SunnyNet/public"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -12,12 +13,17 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"io"
 	"log"
+	"net/http"
 	"strings"
+	"time"
 )
 
 var Sunny = SunnyNet.NewSunny()
+var agentlist = make(map[string]*agent)
 
 func main() {
+	//agentlist = make(map[string]*websocket.Conn)
+	//agentlist.queue = make(chan []byte, 2)
 	//绑定回调函数
 	Sunny.SetGoCallback(HttpCallback, TcpCallback, WSCallback, UdpCallback)
 
@@ -31,11 +37,90 @@ func main() {
 	s.SetGlobalProxy("socket5://127.0.0.1:30801") //这个是全局的
 	s.Start()
 
+	upgrader := websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			return true // 允许所有CORS请求，实际应用中应根据需要设置
+		},
+	}
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		handleWebSocket(upgrader, w, r)
+	})
+
+	err := http.ListenAndServe(":18080", nil)
+	if err != nil {
+		panic("ListenAndServe: " + err.Error())
+	}
+	log.Println("ws服务启动成功")
+
 	//避免程序退出
 	select {}
 
 }
+func handleWebSocket(upgrader websocket.Upgrader, w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("upgrade:", err)
+		return
+	}
+	defer conn.Close()
+	key := r.Header.Get("Sec-WebSocket-Key")
+	if key == "" {
+		log.Println("Missing Sec-WebSocket-Key header")
+		return
+	}
 
+	agentlist[key] = &agent{
+		queue: make(chan []byte, 2), // 假设capacity是队列的容量
+		stop:  make(chan struct{}),
+		conn:  conn,
+	}
+	go handleClient(agentlist[key])
+
+	log.Println("当前连接数", len(agentlist))
+	// 设置超时时间
+	err = agentlist[key].conn.SetReadDeadline(time.Now().Add(30 * time.Second))
+	if err != nil {
+		log.Println("SetReadDeadline:", err)
+		return
+	}
+	defer func() {
+		log.Println(key, "断开连接")
+
+		close(agentlist[key].stop)
+		delete(agentlist, key)
+	}()
+	for {
+		mt, message, err := conn.ReadMessage()
+		if err != nil {
+			log.Println("read:", err)
+			break
+		}
+		log.Printf("recv: %s", message)
+		if string(message) == "ping" {
+			if err := conn.WriteMessage(mt, []byte("pong")); err != nil {
+				log.Println("write:", err)
+				break
+			} else {
+				_ = agentlist[key].conn.SetReadDeadline(time.Now().Add(30 * time.Second))
+			}
+		}
+	}
+}
+func handleClient(a *agent) {
+	for {
+		select {
+		case <-a.stop:
+			break
+		case b := <-a.queue:
+			err := a.conn.WriteMessage(websocket.TextMessage, b)
+			if err != nil {
+				log.Println("发送消息失败", err)
+			}
+		}
+
+	}
+
+}
 func HttpCallback(Conn *SunnyNet.HttpConn) {
 
 }
@@ -98,11 +183,17 @@ func WSCallback(Conn *SunnyNet.WsConn) {
 				log.Println("protojson:unmarshal:", err)
 				return
 			}
-			log.Println(string(marshal))
+			for _, v := range agentlist {
+				v.queue <- marshal
+			}
+			log.Println("队列大小:", len(agentlist))
 
 		}
 		//log.Println(response.)
 	}
+
+}
+func processMessages() {
 
 }
 func Match(Method string) (protoreflect.ProtoMessage, error) {
