@@ -1,245 +1,259 @@
 package main
 
 import (
-	tiktokhack "Sunny/tiktok_hack/generated"
 	"bytes"
 	"compress/gzip"
+	"encoding/hex"
+	"errors"
 	"fmt"
-	"github.com/gorilla/websocket"
-	"github.com/qtgolang/SunnyNet/SunnyNet"
-	"github.com/qtgolang/SunnyNet/public"
-	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"io"
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
+
+	"Sunny/tiktok_hack/generated"
+	"github.com/gorilla/websocket"
+	"github.com/qtgolang/SunnyNet/SunnyNet"
+	"github.com/qtgolang/SunnyNet/public"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 var Sunny = SunnyNet.NewSunny()
-var agentlist = make(map[string]*agent)
+var agentlist sync.Map // 使用 sync.Map 替代 map[string]*agent
 
+// agent 结构体用于存储 WebSocket 连接及其相关信息
 func main() {
-	//agentlist = make(map[string]*websocket.Conn)
-	//agentlist.queue = make(chan []byte, 2)
-	//绑定回调函数
+	// 绑定回调函数
 	Sunny.SetGoCallback(HttpCallback, TcpCallback, WSCallback, UdpCallback)
 
-	//绑定端口号并启动
-
-	s := Sunny.SetPort(10808)
+	// 设置端口并启动
+	s := Sunny.SetPort(23809)
 	//随机tls指纹
 	//s.SetRandomTLS(true)
-	//设置全局上游代理 仅支持Socket5和http 例如 socket5://admin:123456@127.0.0.1:8888 或 http://admin:123456@127.0.0.1:8888
-	s.SetGlobalProxy("socket5://127.0.0.1:30801") //这个是全局的
-	s.Start()
+	s.SetGlobalProxy("socket5://127.0.0.1:21586")
+	st := s.Start()
+	if st.Error != nil {
+		log.Fatalf(st.Error.Error())
+	}
 
+	// 设置 WebSocket 升级器
 	upgrader := websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
-			return true // 允许所有CORS请求，实际应用中应根据需要设置
+			return true // 允许所有 CORS 请求
 		},
 	}
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+
+	// 处理 WebSocket 请求
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		handleWebSocket(upgrader, w, r)
 	})
-	fmt.Println("浏览器代理设置为:127.0.0.1:10808")
-	fmt.Println("上游代理地址为:127.0.0.1:30801")
+
+	fmt.Println("浏览器代理设置为:127.0.0.1:23809")
+	fmt.Println("上游代理地址为:127.0.0.1:21586")
 	fmt.Println("正在运行....")
-	err := http.ListenAndServe(":18080", nil)
-	if err != nil {
-		panic("ListenAndServe: " + err.Error())
-	}
-	log.Println("ws服务启动成功")
 
-	//避免程序退出
+	// 启动 HTTP 服务器
+	go func() {
+		err := http.ListenAndServe(":18080", nil)
+		if err != nil {
+			log.Fatalf("ListenAndServe: %v", err)
+		}
+	}()
+
+	log.Println("WebSocket 服务启动成功.ws端口为18080")
+
+	// 避免程序退出
 	select {}
-
 }
+
+// handleWebSocket 处理 WebSocket 连接
 func handleWebSocket(upgrader websocket.Upgrader, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("upgrade:", err)
+		log.Println("WebSocket 升级失败:", err)
 		return
 	}
 	defer conn.Close()
+
 	key := r.Header.Get("Sec-WebSocket-Key")
 	if key == "" {
-		log.Println("Missing Sec-WebSocket-Key header")
+		log.Println("缺少 Sec-WebSocket-Key 头")
 		return
 	}
 
-	agentlist[key] = &agent{
-		queue: make(chan []byte, 2), // 假设capacity是队列的容量
+	agent := &agent{
+		queue: make(chan []byte, 2),
 		stop:  make(chan struct{}),
 		conn:  conn,
 	}
-	go handleClient(agentlist[key])
+	agentlist.Store(key, agent)
+	go handleClient(agent)
 
-	log.Println("当前连接数", len(agentlist))
-	// 设置超时时间
-	err = agentlist[key].conn.SetReadDeadline(time.Now().Add(30 * time.Second))
+	log.Println("当前连接数", getAgentCount())
+
+	// 设置读取超时时间
+	err = agent.conn.SetReadDeadline(time.Now().Add(30 * time.Second))
 	if err != nil {
-		log.Println("SetReadDeadline:", err)
+		log.Println("设置读取超时失败:", err)
 		return
 	}
+
 	defer func() {
 		log.Println(key, "断开连接")
-
-		close(agentlist[key].stop)
-		delete(agentlist, key)
+		close(agent.stop)
+		agentlist.Delete(key)
 	}()
+
 	for {
 		mt, message, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("read:", err)
+			log.Println("读取消息失败:", err)
 			break
 		}
-		log.Printf("recv: %s", message)
+		log.Printf("收到消息: %s", message)
 		if string(message) == "ping" {
 			if err := conn.WriteMessage(mt, []byte("pong")); err != nil {
-				log.Println("write:", err)
+				log.Println("发送消息失败:", err)
 				break
 			} else {
-				_ = agentlist[key].conn.SetReadDeadline(time.Now().Add(30 * time.Second))
+				_ = agent.conn.SetReadDeadline(time.Now().Add(30 * time.Second))
 			}
 		}
 	}
 }
+
+// handleClient 处理客户端消息
 func handleClient(a *agent) {
 	for {
 		select {
 		case <-a.stop:
-			break
+			return
 		case b := <-a.queue:
 			err := a.conn.WriteMessage(websocket.TextMessage, b)
 			if err != nil {
-				log.Println("发送消息失败", err)
+				log.Println("发送消息失败:", err)
 			}
 		}
-
 	}
-
 }
+
+// getAgentCount 获取当前连接数
+func getAgentCount() int {
+	count := 0
+	agentlist.Range(func(_, _ interface{}) bool {
+		count++
+		return true
+	})
+	return count
+}
+
+// HttpCallback HTTP 回调函数
 func HttpCallback(Conn *SunnyNet.HttpConn) {
-
+	// 处理 HTTP 连接
 }
 
+// WSCallback WebSocket 回调函数
 func WSCallback(Conn *SunnyNet.WsConn) {
-	//tiktok.com/webcast/im/
-	if strings.Contains(Conn.Url, "webcast/im/") == false {
+	if !strings.Contains(Conn.Url, "tiktok.com/webcast/im/") {
 		return
-
 	}
-	//捕获到数据可以修改,修改空数据,取消发送/接收
+
 	message := Conn.GetMessageBody()
-	//fmt.Println("ws数据", Conn.GetMessageBody())
-	PushFrame := &tiktokhack.WebcastPushFrame{}
+	PushFrame := &tiktok_hack.WebcastPushFrame{}
 	err := proto.Unmarshal(message, PushFrame)
 	if err != nil {
-		log.Println("解析消息失败：", err)
+		log.Println("解析消息失败:", err)
 		return
 	}
-	//log.Println(PushFrame.Payload)
+
 	if PushFrame.PayloadType == "ack" {
-		//心跳包数据不做处理
-		return
+		return // 心跳包数据不处理
 	}
-	n := false
-	for v, p := range PushFrame.Headers {
-		if v == "compress_type" {
-			if p == "gzip" {
-				n = true
-				continue
-			}
-		}
-	}
-	//消息为gzip压缩
-	if n == true && PushFrame.PayloadType == "msg" {
+
+	isGzip := CheckGzip(PushFrame)
+	if isGzip && PushFrame.PayloadType == "msg" {
 		gzipReader, err := gzip.NewReader(bytes.NewReader(PushFrame.Payload))
-		defer gzipReader.Close()
 		if err != nil {
-			log.Println("解析消息失败gzip：", err, PushFrame.PayloadType)
+			log.Println("解析 Gzip 消息失败:", err)
+			return
+		}
+		defer gzipReader.Close()
+
+		uncompressedData, err := io.ReadAll(gzipReader)
+		if err != nil {
+			log.Println("读取解压数据失败:", err)
 			return
 		}
 
-		uncompressedData, _ := io.ReadAll(gzipReader)
-		response := &tiktokhack.WebcastResponse{}
+		response := &tiktok_hack.WebcastResponse{}
 		err = proto.Unmarshal(uncompressedData, response)
+		if err != nil {
+			log.Println("解析解压数据失败:", err)
+			return
+		}
 
 		for _, v := range response.Messages {
-			msg, err := Match(v.Method)
+			msg, err := MatchMethod(v.Method)
 			if err != nil {
-				log.Println("未知的消息类型", err, PushFrame.PayloadType)
+				log.Printf("未知消息，无法处理: %v, %s\n", err, hex.EncodeToString(v.Payload))
 				continue
 			}
 			err = proto.Unmarshal(v.Payload, msg)
 			if err != nil {
-				log.Println("解析消息失败3：", err)
+				log.Println("解析消息失败:", err)
 				continue
 			}
+
+			// 序列化为 JSON
 			marshal, err := protojson.Marshal(msg)
 			if err != nil {
-				log.Println("protojson:unmarshal:", err)
-				return
+				log.Println("JSON 序列化失败:", err)
+				continue
 			}
-			for _, v := range agentlist {
-				v.queue <- marshal
-			}
-			//log.Println("队列大小:", len(agentlist))
 
+			// 遍历 agentlist，将消息发送到每个连接
+			agentlist.Range(func(_, value interface{}) bool {
+				agent := value.(*agent)
+				agent.queue <- marshal
+				return true
+			})
 		}
-		//log.Println(response.)
-	}
 
-}
-func processMessages() {
-
-}
-func Match(Method string) (protoreflect.ProtoMessage, error) {
-	switch Method {
-	case "WebcastChatMessage":
-		return &tiktokhack.WebcastChatMessage{}, nil
-	case "WebcastMemberMessage":
-		return &tiktokhack.WebcastMemberMessage{}, nil
-	case "WebcastRoomUserSeqMessage":
-		return &tiktokhack.WebcastRoomUserSeqMessage{}, nil
-	case "WebcastLikeMessage":
-		return &tiktokhack.WebcastLikeMessage{}, nil
-	case "WebcastSocialMessage":
-		return &tiktokhack.WebcastSocialMessage{}, nil
-	case "WebcastGiftMessage":
-		return &tiktokhack.WebcastGiftMessage{}, nil
-	case "WebcastImDeleteMessage":
-		return &tiktokhack.WebcastImDeleteMessage{}, nil
-	case "WebcastUnauthorizedMemberMessage":
-		return &tiktokhack.WebcastUnauthorizedMemberMessage{}, nil
-	case "WebcastRankUpdateMessage":
-		return &tiktokhack.WebcastRankUpdateMessage{}, nil
-	case "WebcastLinkMicArmies":
-		return &tiktokhack.WebcastLinkMicArmies{}, nil
-
-	default:
-		return nil, fmt.Errorf("未知的消息类型:" + Method)
 	}
 }
+
+// CheckGzip 检查协议头当中是否包含gzip
+func CheckGzip(headers *tiktok_hack.WebcastPushFrame) bool {
+	if compressType, exists := headers.Headers["compress_type"]; exists && compressType == "gzip" {
+		return true
+	}
+	return false
+}
+
+// TcpCallback TCP 回调函数
 func TcpCallback(Conn *SunnyNet.TcpConn) {
-	//捕获到数据可以修改,修改空数据,取消发送/接收
-	//Conn.SetAgent("") //这个是针对这个一个请求的,TCP,只能设置S5代理,
-	//fmt.Println(Conn.Pid, Conn.LocalAddr, Conn.RemoteAddr, Conn.Type, Conn.GetBodyLen())
+	// 处理 TCP 连接
 }
+
+// UdpCallback UDP 回调函数
 func UdpCallback(Conn *SunnyNet.UDPConn) {
-	//在 Windows 捕获UDP需要加载驱动,并且设置进程名
-	//其他情况需要设置Socket5代理,才能捕获到UDP
-	//捕获到数据可以修改,修改空数据,取消发送/接收
 	if public.SunnyNetUDPTypeReceive == Conn.Type {
-		//fmt.Println("接收UDP", Conn.LocalAddress, Conn.RemoteAddress, len(Conn.Data))
+		// 处理接收的 UDP 数据
 	}
 	if public.SunnyNetUDPTypeSend == Conn.Type {
-		//fmt.Println("发送UDP", Conn.LocalAddress, Conn.RemoteAddress, len(Conn.Data))
+		// 处理发送的 UDP 数据
 	}
 	if public.SunnyNetUDPTypeClosed == Conn.Type {
-		//fmt.Println("关闭UDP", Conn.LocalAddress, Conn.RemoteAddress)
+		// 处理关闭的 UDP 连接
 	}
+}
+func MatchMethod(method string) (protoreflect.ProtoMessage, error) {
+	if createMessage, ok := messageTypeMap[method]; ok {
+		return createMessage(), nil
+	}
+	return nil, errors.New("未知消息: " + method)
 }
