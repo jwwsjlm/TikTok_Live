@@ -32,6 +32,7 @@ func main() {
 
 	// 设置端口并启动
 	s := Sunny.SetPort(23809)
+	defer s.Close()
 	//随机tls指纹
 	//s.SetRandomTLS(true)
 	s.SetGlobalProxy("socket5://127.0.0.1:21586")
@@ -228,10 +229,7 @@ func WSCallback(Conn *SunnyNet.WsConn) {
 
 // CheckGzip 检查协议头当中是否包含gzip
 func CheckGzip(headers *tiktok_hack.WebcastPushFrame) bool {
-	if compressType, exists := headers.Headers["compress_type"]; exists && compressType == "gzip" {
-		return true
-	}
-	return false
+	return headers.Headers["compress_type"] == "gzip"
 }
 
 // TcpCallback TCP 回调函数
